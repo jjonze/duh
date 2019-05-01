@@ -1,0 +1,68 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.4.RELEASE'
+    id 'java'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '5.0.0'
+    id 'com.github.ben-manes.versions' version '0.21.0'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.duh'
+sourceCompatibility = '1.8'
+
+repositories {
+    maven {
+        url "https://nexus.train.chikli.com/repository/maven-public/"
+        credentials {
+            username "training"
+            password "NmJD3sQHonswQDRgqZFzyUFFUQ3WMuzTTKwRmYJXkDyXHCkBJhfirGmTUXtiezeg"
+        }
+        authentication {
+            basic(BasicAuthentication)
+        }
+    }
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'com.h2database:h2'
+
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.assertj:assertj-core:3.12.2'
+    testImplementation 'io.cucumber:cucumber-java8:4.3.0'
+    testImplementation 'io.cucumber:cucumber-junit:4.3.0'
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            groupId=group
+            project.shadow.component(publication)
+        }
+    }
+    repositories {
+        maven {
+            url "https://nexus.train.chikli.com/repository/maven-releases/"
+            credentials {
+                username "training"
+                password "NmJD3sQHonswQDRgqZFzyUFFUQ3WMuzTTKwRmYJXkDyXHCkBJhfirGmTUXtiezeg"
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+        mavenCentral()
+    }
+
+    bootJar {
+        mainClassName = 'com.chikli.demo.App'
+    }
+}
